@@ -26,12 +26,25 @@ class _TransactionUserState extends State<TransactionUser> {
     ),
   ];
 
+  _addNewTransaction(String title, double value) {
+    final newTransaction = Transaction(
+      id: (_transactions.length + 1).toString(),
+      title: title,
+      value: value,
+      date: DateTime.now(),
+    );
+
+    setState(() {
+      _transactions.add(newTransaction);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TransactionList(_transactions),
-        TransactionForm(),
+        TransactionForm(_addNewTransaction),
       ],
     );
   }

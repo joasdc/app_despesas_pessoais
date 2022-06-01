@@ -34,19 +34,21 @@ class HomePage extends StatelessWidget {
         backgroundColor: primaryColor,
         title: Text('Despesas Pessoais'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            width: double.infinity,
-            child: Card(
-              color: Colors.yellowAccent,
-              elevation: 5,
-              child: Text('Gráfico'),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: double.infinity,
+              child: Card(
+                color: Colors.yellowAccent,
+                elevation: 5,
+                child: Text('Gráfico'),
+              ),
             ),
-          ),
-          TransactionUser(),
-        ],
+            TransactionUser(),
+          ],
+        ),
       ),
     );
   }

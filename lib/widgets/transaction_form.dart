@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 
 class TransactionForm extends StatelessWidget {
-  TransactionForm({Key? key}) : super(key: key);
+  final Function(String, double) newTransaction;
+
+  TransactionForm(this.newTransaction, {Key? key}) : super(key: key);
 
   final _titleController = TextEditingController();
   final _valueController = TextEditingController();
@@ -46,8 +48,9 @@ class TransactionForm extends StatelessWidget {
                   primary: HomePage.primaryColor,
                 ),
                 onPressed: () {
-                  print(_titleController.text);
-                  print(_valueController.text);
+                  final title = _titleController.text;
+                  final value = double.tryParse(_valueController.text) ?? 0.0;
+                  newTransaction(title, value);
                 },
               ),
             )
