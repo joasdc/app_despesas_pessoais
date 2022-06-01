@@ -1,6 +1,8 @@
 import 'package:despesas_pessoais/models/transaction.dart';
+import 'package:despesas_pessoais/widgets/transaction_form.dart';
+import 'package:despesas_pessoais/widgets/transaction_list.dart';
+import 'package:despesas_pessoais/widgets/transaction_user.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 void main() {
   runApp(ExpensesApp());
@@ -25,21 +27,6 @@ class HomePage extends StatelessWidget {
   static const grayTitleText = Color.fromARGB(255, 145, 149, 157);
   static const graySubtitleText = Color.fromARGB(255, 194, 197, 202);
 
-  final List<Transaction> _transaction = [
-    Transaction(
-      id: "1",
-      title: "Conta de Luz",
-      value: 452.60,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "2",
-      title: "Mensalidade da Faculdade",
-      value: 258.60,
-      date: DateTime.now(),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +35,6 @@ class HomePage extends StatelessWidget {
         title: Text('Despesas Pessoais'),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
@@ -59,55 +45,7 @@ class HomePage extends StatelessWidget {
               child: Text('Gráfico'),
             ),
           ),
-          Column(
-            children: _transaction.map((transaction) {
-              return Card(
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: primaryColor,
-                          width: 2,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        "R\$ ${transaction.value.toStringAsFixed(2).replaceAll('.', ',')}",
-                        style: const TextStyle(
-                          color: primaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          transaction.title,
-                          style: const TextStyle(
-                            color: grayTitleText,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          DateFormat('d MMM y').format(transaction.date),
-                          style: const TextStyle(color: graySubtitleText),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+          TransactionUser(),
         ],
       ),
     );
