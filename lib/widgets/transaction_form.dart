@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 import '../main.dart';
 
-class TransactionForm extends StatelessWidget {
+class TransactionForm extends StatefulWidget {
   final Function(String, double) newTransaction;
 
   TransactionForm(this.newTransaction, {Key? key}) : super(key: key);
 
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
+
+class _TransactionFormState extends State<TransactionForm> {
   final _titleController = TextEditingController();
+
   final _valueController = TextEditingController();
+
+  _submitForm() {
+    final title = _titleController.text;
+    final value = double.tryParse(_valueController.text) ?? 0.0;
+
+    if (title.isEmpty || value <= 0) {
+      return;
+    }
+
+    // herança de TransactionForm, através de widget, conseguimos acessar todos os parâmetros passados.
+    widget.newTransaction(title, value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,39 +37,40 @@ class TransactionForm extends StatelessWidget {
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Título',
-                labelStyle: TextStyle(color: HomePage.grayTitleText),
-                floatingLabelStyle: TextStyle(color: HomePage.primaryColor),
+                labelStyle: TextStyle(color: ExpensesApp.grayTitleText),
+                floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
                 focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HomePage.primaryColor)),
+                    borderSide: BorderSide(color: ExpensesApp.primaryColor)),
                 enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HomePage.graySubtitleText)),
+                    borderSide:
+                        BorderSide(color: ExpensesApp.graySubtitleText)),
               ),
+              onSubmitted: (_) => _submitForm(),
               controller: _titleController,
             ),
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Valor (R\$)',
-                labelStyle: TextStyle(color: HomePage.grayTitleText),
-                floatingLabelStyle: TextStyle(color: HomePage.primaryColor),
+                labelStyle: TextStyle(color: ExpensesApp.grayTitleText),
+                floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
                 focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HomePage.primaryColor)),
+                    borderSide: BorderSide(color: ExpensesApp.primaryColor)),
                 enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HomePage.graySubtitleText)),
+                    borderSide:
+                        BorderSide(color: ExpensesApp.graySubtitleText)),
               ),
               controller: _valueController,
+              onSubmitted: (_) => _submitForm(),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 child: const Text('Nova Transação'),
                 style: TextButton.styleFrom(
-                  primary: HomePage.primaryColor,
+                  primary: ExpensesApp.primaryColor,
                 ),
-                onPressed: () {
-                  final title = _titleController.text;
-                  final value = double.tryParse(_valueController.text) ?? 0.0;
-                  newTransaction(title, value);
-                },
+                onPressed: _submitForm,
               ),
             )
           ],
