@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:intl/intl.dart';
+
 import '../main.dart';
 
 class TransactionForm extends StatefulWidget {
-  final Function(String, double) newTransaction;
+  final Function(String, double, DateTime) newTransaction;
 
   TransactionForm(this.newTransaction, {Key? key}) : super(key: key);
 
@@ -15,6 +17,7 @@ class _TransactionFormState extends State<TransactionForm> {
   // Controllers
   final _titleController = TextEditingController();
   final _valueController = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
 
   _submitForm() {
     final title = _titleController.text;
@@ -25,7 +28,24 @@ class _TransactionFormState extends State<TransactionForm> {
     }
 
     // herança de TransactionForm, através de widget, conseguimos acessar todos os parâmetros passados.
-    widget.newTransaction(title, value);
+    widget.newTransaction(title, value, _selectedDate);
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      if (pickedDate != null) {
+        setState(() {
+          _selectedDate = pickedDate;
+        });
+      } else {
+        return;
+      }
+    });
   }
 
   @override
@@ -63,11 +83,41 @@ class _TransactionFormState extends State<TransactionForm> {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
             ),
+            SizedBox(
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate != null
+                        ? 'Data: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'
+                        : 'Nenhuma data selecionada',
+                  ),
+                  TextButton(
+                    child: const Text(
+                      'Selecionar data',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      primary: ExpensesApp.primaryColor,
+                    ),
+                    onPressed: _showDatePicker,
+                  ),
+                ],
+              ),
+            ),
             Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
-                child: const Text('Nova Transação'),
-                style: TextButton.styleFrom(
+              child: ElevatedButton(
+                child: const Text(
+                  'Nova Transação',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
                   primary: ExpensesApp.primaryColor,
                 ),
                 onPressed: _submitForm,
