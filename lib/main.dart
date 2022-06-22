@@ -43,20 +43,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: "1",
-      title: "Conta de Luz",
-      value: 452.60,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: "2",
-      title: "Mensalidade da Faculdade",
-      value: 258.60,
-      date: DateTime.now().subtract(Duration(days: 4)),
-    ),
-  ];
+  final List<Transaction> _transactions = [];
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((transaction) {
@@ -65,18 +52,63 @@ class _HomePageState extends State<HomePage> {
     }).toList();
   }
 
-  _addNewTransaction(String title, double value) {
+  _addNewTransaction(String title, double value, DateTime transactionDate) {
     final newTransaction = Transaction(
       id: (_transactions.length + 1).toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: transactionDate,
     );
 
     setState(() {
       _transactions.add(newTransaction);
     });
     Navigator.of(context).pop();
+  }
+
+  _removeTransaction(String id) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Apagar Transação'),
+            content: const Text('Deseja apagar esta transação?'),
+            actions: [
+              TextButton(
+                child: const Text(
+                  'Não',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  primary: ExpensesApp.primaryColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Sim',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  primary: ExpensesApp.primaryColor,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _transactions
+                        .removeWhere((transaction) => transaction.id == id);
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   _openTransactionFormModal(BuildContext context) {
@@ -107,7 +139,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(_transactions),
+            TransactionList(_transactions, _removeTransaction),
           ],
         ),
       ),
