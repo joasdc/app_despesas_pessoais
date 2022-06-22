@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../main.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -11,8 +12,8 @@ class TransactionForm extends StatefulWidget {
 }
 
 class _TransactionFormState extends State<TransactionForm> {
+  // Controllers
   final _titleController = TextEditingController();
-
   final _valueController = TextEditingController();
 
   _submitForm() {
@@ -37,13 +38,12 @@ class _TransactionFormState extends State<TransactionForm> {
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Título',
-                labelStyle: TextStyle(color: ExpensesApp.grayTitleText),
+                labelStyle: TextStyle(color: ExpensesApp.grayColor),
                 floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: ExpensesApp.primaryColor)),
                 enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: ExpensesApp.graySubtitleText)),
+                    borderSide: BorderSide(color: ExpensesApp.lightGrayColor)),
               ),
               onSubmitted: (_) => _submitForm(),
               controller: _titleController,
@@ -51,17 +51,17 @@ class _TransactionFormState extends State<TransactionForm> {
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Valor (R\$)',
-                labelStyle: TextStyle(color: ExpensesApp.grayTitleText),
+                labelStyle: TextStyle(color: ExpensesApp.grayColor),
                 floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: ExpensesApp.primaryColor)),
                 enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: ExpensesApp.graySubtitleText)),
+                    borderSide: BorderSide(color: ExpensesApp.lightGrayColor)),
               ),
               controller: _valueController,
               onSubmitted: (_) => _submitForm(),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
             ),
             Align(
               alignment: Alignment.centerRight,

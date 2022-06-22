@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/transaction.dart';
+
 import 'package:intl/intl.dart';
+
 import '../main.dart';
+import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -15,7 +17,7 @@ class TransactionList extends StatelessWidget {
       child: transactions.isEmpty
           ? Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   "Nenhuma Transação Cadastrada",
                   style: Theme.of(context).appBarTheme.titleTextStyle,
@@ -35,52 +37,35 @@ class TransactionList extends StatelessWidget {
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
                 return Card(
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ExpensesApp.primaryColor,
-                            width: 2,
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          "R\$ ${transaction.value.toStringAsFixed(2).replaceAll('.', ',')}",
-                          style: const TextStyle(
-                            color: ExpensesApp.primaryColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: FittedBox(
+                          child: Text(
+                            "R\$ ${transaction.value.toStringAsFixed(2)}",
                           ),
                         ),
                       ),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              transaction.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: ExpensesApp.grayTitleText,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              DateFormat('d MMM y').format(transaction.date),
-                              style: const TextStyle(
-                                  color: ExpensesApp.graySubtitleText),
-                            ),
-                          ],
-                        ),
+                    ),
+                    title: Text(
+                      transaction.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: ExpensesApp.grayColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
+                    subtitle: Text(
+                      DateFormat('d MMM y').format(transaction.date),
+                      style: const TextStyle(
+                        color: ExpensesApp.lightGrayColor,
+                      ),
+                    ),
                   ),
                 );
               },
