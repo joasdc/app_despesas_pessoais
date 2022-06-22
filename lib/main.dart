@@ -1,7 +1,9 @@
-import 'package:despesas_pessoais/widgets/transaction_form.dart';
-import 'package:despesas_pessoais/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
-import 'package:despesas_pessoais/models/transaction.dart';
+
+import 'models/transaction.dart';
+import 'widgets/chart.dart';
+import 'widgets/transaction_form.dart';
+import 'widgets/transaction_list.dart';
 
 void main() {
   runApp(const ExpensesApp());
@@ -12,8 +14,8 @@ class ExpensesApp extends StatelessWidget {
 
   static const primaryColor = Color.fromARGB(255, 118, 165, 238);
   static const dangerColor = Color.fromARGB(255, 254, 186, 214);
-  static const grayTitleText = Color.fromARGB(255, 145, 149, 157);
-  static const graySubtitleText = Color.fromARGB(255, 194, 197, 202);
+  static const grayColor = Color.fromARGB(255, 145, 149, 157);
+  static const lightGrayColor = Color.fromARGB(255, 194, 197, 202);
 
   @override
   Widget build(BuildContext context) {
@@ -42,19 +44,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Transaction> _transactions = [
-    // Transaction(
-    //   id: "1",
-    //   title: "Conta de Luz",
-    //   value: 452.60,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: "2",
-    //   title: "Mensalidade da Faculdade",
-    //   value: 258.60,
-    //   date: DateTime.now(),
-    // ),
+    Transaction(
+      id: "1",
+      title: "Conta de Luz",
+      value: 452.60,
+      date: DateTime.now().subtract(Duration(days: 3)),
+    ),
+    Transaction(
+      id: "2",
+      title: "Mensalidade da Faculdade",
+      value: 258.60,
+      date: DateTime.now().subtract(Duration(days: 4)),
+    ),
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _transactions.where((transaction) {
+      return transaction.date
+          .isAfter(DateTime.now().subtract(const Duration(days: 7)));
+    }).toList();
+  }
 
   _addNewTransaction(String title, double value) {
     final newTransaction = Transaction(
@@ -83,13 +92,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ExpensesApp.primaryColor,
-        title: Text(
+        title: const Text(
           'Despesas Pessoais',
         ),
         actions: [
           IconButton(
             onPressed: () => _openTransactionFormModal(context),
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
           )
         ],
       ),
@@ -97,21 +106,14 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.yellowAccent,
-                elevation: 5,
-                child: Text('Gráfico'),
-              ),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_transactions),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ExpensesApp.primaryColor,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () => _openTransactionFormModal(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
