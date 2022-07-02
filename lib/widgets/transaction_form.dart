@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:despesas_pessoais/widgets/adaptative_button.dart';
+import 'package:despesas_pessoais/widgets/adaptative_textField.dart';
 import 'package:intl/intl.dart';
 
 import '../main.dart';
@@ -7,7 +9,7 @@ import '../main.dart';
 class TransactionForm extends StatefulWidget {
   final Function(String, double, DateTime) newTransaction;
 
-  TransactionForm(this.newTransaction, {Key? key}) : super(key: key);
+  const TransactionForm(this.newTransaction, {Key? key}) : super(key: key);
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
@@ -50,80 +52,96 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                labelStyle: TextStyle(color: ExpensesApp.grayColor),
-                floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: ExpensesApp.primaryColor)),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: ExpensesApp.lightGrayColor)),
+    return SingleChildScrollView(
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            right: 10,
+            bottom: 10 + MediaQuery.of(context).viewInsets.bottom,
+            left: 10,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AdaptativeTextField(
+                label: 'Título',
+                keyboard: TextInputType.text,
+                controller: _titleController,
+                onSubmit: _submitForm,
               ),
-              onSubmitted: (_) => _submitForm(),
-              controller: _titleController,
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Valor (R\$)',
-                labelStyle: TextStyle(color: ExpensesApp.grayColor),
-                floatingLabelStyle: TextStyle(color: ExpensesApp.primaryColor),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: ExpensesApp.primaryColor)),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: ExpensesApp.lightGrayColor)),
+              AdaptativeTextField(
+                label: 'Valor (R\$)',
+                keyboard: const TextInputType.numberWithOptions(decimal: true),
+                controller: _valueController,
+                onSubmit: _submitForm,
               ),
-              controller: _valueController,
-              onSubmitted: (_) => _submitForm(),
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-            ),
-            SizedBox(
-              height: 70,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedDate != null
-                        ? 'Data: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'
-                        : 'Nenhuma data selecionada',
-                  ),
-                  TextButton(
-                    child: const Text(
-                      'Selecionar data',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+              // TextField(
+              //   decoration: const InputDecoration(
+              //     labelText: 'Título',
+              //     labelStyle: TextStyle(color: ExpensesApp.grayColor),
+              //     floatingLabelStyle:
+              //         TextStyle(color: ExpensesApp.primaryColor),
+              //     focusedBorder: UnderlineInputBorder(
+              //         borderSide: BorderSide(color: ExpensesApp.primaryColor)),
+              //     enabledBorder: UnderlineInputBorder(
+              //         borderSide:
+              //             BorderSide(color: ExpensesApp.lightGrayColor)),
+              //   ),
+              //   onSubmitted: (_) => _submitForm(),
+              //   controller: _titleController,
+              // ),
+              // TextField(
+              //   decoration: const InputDecoration(
+              //     labelText: 'Valor (R\$)',
+              //     labelStyle: TextStyle(color: ExpensesApp.grayColor),
+              //     floatingLabelStyle:
+              //         TextStyle(color: ExpensesApp.primaryColor),
+              //     focusedBorder: UnderlineInputBorder(
+              //         borderSide: BorderSide(color: ExpensesApp.primaryColor)),
+              //     enabledBorder: UnderlineInputBorder(
+              //         borderSide:
+              //             BorderSide(color: ExpensesApp.lightGrayColor)),
+              //   ),
+              //   controller: _valueController,
+              //   onSubmitted: (_) => _submitForm(),
+              //   keyboardType:
+              //       const TextInputType.numberWithOptions(decimal: true),
+              // ),
+              SizedBox(
+                height: 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedDate != null
+                          ? 'Data: ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'
+                          : 'Nenhuma data selecionada',
+                    ),
+                    TextButton(
+                      child: const Text(
+                        'Selecionar data',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      style: TextButton.styleFrom(
+                        primary: ExpensesApp.primaryColor,
+                      ),
+                      onPressed: _showDatePicker,
                     ),
-                    style: TextButton.styleFrom(
-                      primary: ExpensesApp.primaryColor,
-                    ),
-                    onPressed: _showDatePicker,
-                  ),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                child: const Text(
-                  'Nova Transação',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  ],
                 ),
-                style: ElevatedButton.styleFrom(
-                  primary: ExpensesApp.primaryColor,
-                ),
-                onPressed: _submitForm,
               ),
-            )
-          ],
+              Align(
+                alignment: Alignment.centerRight,
+                child: AdaptativeButton(
+                  label: 'Nova Transação',
+                  onPressed: _submitForm,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

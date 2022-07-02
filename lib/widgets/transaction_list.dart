@@ -14,19 +14,18 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      padding: const EdgeInsets.only(bottom: 40),
-      child: transactions.isEmpty
-          ? Column(
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (context, constraints) {
+            return Column(
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text(
                   "Nenhuma Transação Cadastrada",
                   style: Theme.of(context).appBarTheme.titleTextStyle,
                 ),
+                SizedBox(height: 20),
                 Container(
-                  height: 200,
+                  height: constraints.maxHeight * 0.5,
                   child: Image.asset(
                     // Sleep icons created by Freepik - Flaticon
                     "assets/images/sleep.png",
@@ -34,53 +33,71 @@ class TransactionList extends StatelessWidget {
                   ),
                 ),
               ],
-            )
-          : ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                final transaction = transactions[index];
-                return Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: FittedBox(
-                          child: Text(
-                            "R\$ ${transaction.value.toStringAsFixed(2)}",
-                          ),
+            );
+          })
+        : ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = transactions[index];
+              return Card(
+                elevation: 5,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: FittedBox(
+                        child: Text(
+                          "R\$ ${transaction.value.toStringAsFixed(2)}",
                         ),
                       ),
                     ),
-                    title: Text(
-                      transaction.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: ExpensesApp.grayColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      DateFormat('d MMM y').format(transaction.date),
-                      style: const TextStyle(
-                        color: ExpensesApp.lightGrayColor,
-                      ),
-                    ),
-                    trailing: IconButton(
-                      splashRadius: 28,
-                      icon: Icon(
-                        Icons.delete_outline,
-                        color: ExpensesApp.dangerColor,
-                      ),
-                      onPressed: () => removeTransaction(transaction.id),
+                  ),
+                  title: Text(
+                    transaction.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: ExpensesApp.grayColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
-            ),
-    );
+                  subtitle: Text(
+                    DateFormat('d MMM y').format(transaction.date),
+                    style: const TextStyle(
+                      color: ExpensesApp.lightGrayColor,
+                    ),
+                  ),
+                  trailing: MediaQuery.of(context).size.width > 480
+                      ? TextButton.icon(
+                          onPressed: () => removeTransaction(transaction.id),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: ExpensesApp.dangerColor,
+                          ),
+                          label: const Text(
+                            "Excluir",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            primary: ExpensesApp.dangerColor,
+                          ),
+                        )
+                      : IconButton(
+                          splashRadius: 28,
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: ExpensesApp.dangerColor,
+                          ),
+                          onPressed: () => removeTransaction(transaction.id),
+                        ),
+                ),
+              );
+            },
+          );
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'models/transaction.dart';
@@ -13,14 +16,14 @@ class ExpensesApp extends StatelessWidget {
   const ExpensesApp({Key? key}) : super(key: key);
 
   static const primaryColor = Color.fromARGB(255, 118, 165, 238);
-  static const dangerColor = Color.fromARGB(255, 254, 186, 214);
+  static const dangerColor = Color.fromARGB(255, 245, 118, 129);
   static const grayColor = Color.fromARGB(255, 145, 149, 157);
   static const lightGrayColor = Color.fromARGB(255, 194, 197, 202);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: const HomePage(),
       theme: ThemeData(
         fontFamily: "Quicksand",
         appBarTheme: const AppBarTheme(
@@ -36,7 +39,7 @@ class ExpensesApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -44,6 +47,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<Transaction> _transactions = [];
+  bool displayChart = false;
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((transaction) {
@@ -114,6 +118,7 @@ class _HomePageState extends State<HomePage> {
   _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (ctxt) {
           return TransactionForm(_addNewTransaction);
         });
@@ -121,34 +126,87 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ExpensesApp.primaryColor,
-        title: const Text(
-          'Despesas Pessoais',
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => _openTransactionFormModal(context),
-            icon: const Icon(Icons.add),
-          )
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandscape = mediaQuery.orientation == Orientation.landscape;
+
+    final isIOS = Platform.isIOS;
+
+    Widget _getIconButton(IconData icon, Function() fn) {
+      return isIOS
+          ? GestureDetector(onTap: fn, child: Icon(icon))
+          : IconButton(onPressed: fn, icon: Icon(icon));
+    }
+
+    final iconList = isIOS ? CupertinoIcons.refresh : Icons.list_alt_rounded;
+    final chartIcon = isIOS ? CupertinoIcons.refresh : Icons.bar_chart_rounded;
+
+    final actions = [
+      isLandscape
+          ? _getIconButton(
+              displayChart ? iconList : chartIcon,
+              () => setState(() {
+                displayChart = !displayChart;
+              }),
+            )
+          : Container(),
+      _getIconButton(isIOS ? CupertinoIcons.add : Icons.add,
+          () => _openTransactionFormModal(context))
+    ];
+
+    final appBar = AppBar(
+      backgroundColor: ExpensesApp.primaryColor,
+      title: const Text(
+        'Despesas Pessoais',
+      ),
+      actions: actions,
+    );
+
+    final availableHeight = mediaQuery.size.height -
+        appBar.preferredSize.height -
+        mediaQuery.padding.top;
+
+    final bodyPage = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (displayChart || !isLandscape)
+            Container(
+              height: availableHeight * (isLandscape ? 0.8 : 0.3),
+              child: Chart(_recentTransactions),
+            ),
+          if (!displayChart || !isLandscape)
+            Container(
+              height: availableHeight * (isLandscape ? 1.0 : 0.7),
+              child: TransactionList(_transactions, _removeTransaction),
+            ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Chart(_recentTransactions),
-            TransactionList(_transactions, _removeTransaction),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: ExpensesApp.primaryColor,
-        child: const Icon(Icons.add),
-        onPressed: () => _openTransactionFormModal(context),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
+    ));
+
+    return isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text('Despesas Pessoais'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
+              ),
+            ),
+            child: bodyPage,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: bodyPage,
+            floatingActionButton: isIOS
+                ? Container()
+                : FloatingActionButton(
+                    backgroundColor: ExpensesApp.primaryColor,
+                    child: const Icon(Icons.add),
+                    onPressed: () => _openTransactionFormModal(context),
+                  ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 }
