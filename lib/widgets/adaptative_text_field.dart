@@ -11,12 +11,13 @@ class AdaptativeTextField extends StatelessWidget {
   final Function() onSubmit;
   final TextEditingController controller;
 
-  AdaptativeTextField({
+  const AdaptativeTextField({
     required this.label,
     required this.keyboard,
     required this.controller,
     required this.onSubmit,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
