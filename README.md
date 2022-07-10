@@ -10,7 +10,7 @@ The project was developed based on a project "Despesas Pessoais" from the course
 
 ## 📱 Preview
    <p align="center">
-      <img src="./assets/preview.gif" width="400" alt="Expenses App demo">
+      <img src="./assets/preview.gif" width="300" alt="Expenses App demo">
    </p>
 
 > Allows you to register and manage your transactions, to control your finances.
